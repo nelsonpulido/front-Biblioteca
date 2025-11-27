@@ -1,61 +1,111 @@
-import { useState } from "react";
-import { useAuth } from "../../context/AuthContext"; 
-import { useNavigate } from "react-router-dom";
-import "../../services/style/login.css"
+import { useState, useEffect } from "react";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate, Link } from "react-router-dom";
+import "../../services/style/Login.css";
 
 function Login() {
-  const { login } = useAuth();
+  const { login } = useAuth(); // ← Mantenido en minúscula
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Función de validación básica
+  const validateForm = () => {
+    if (!email.trim()) {
+      setErrorMsg("El correo es obligatorio.");
+      return false;
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setErrorMsg("Ingresa un correo válido.");
+      return false;
+    }
+    if (!password.trim()) {
+      setErrorMsg("La contraseña es obligatoria.");
+      return false;
+    }
+    return true;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMsg(""); // Limpiar errores previos
 
-    setError("");
+    if (!validateForm()) return;
 
-    if (!email || !password) {
-      setError("Por favor completa todos los campos.");
-      return;
-    }
-
+    setLoading(true);
     try {
-      await login(email, password);
-    } catch (err) {
-      setError("Credenciales incorrectas o error en el servidor");
+      const Tipo = await login(email, password); // ← Mantenido en minúscula
+
+      console.log("TipoRecibido:", Tipo);
+
+      if (!Tipo) {
+        setErrorMsg("Credenciales incorrectas. Verifica tu email y contraseña.");
+        return;
+      }
+
+      if (Tipo === "admin") navigate("/admin");
+      else if (Tipo === "bibliotecario") navigate("/bibliotecario");
+      else if (Tipo === "usuario") navigate("/usuario");
+    } catch (error) {
+      setErrorMsg("Error al iniciar sesión. Inténtalo de nuevo.");
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Limpiar mensaje de error después de 5 segundos
+  useEffect(() => {
+    if (errorMsg) {
+      const timer = setTimeout(() => setErrorMsg(""), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [errorMsg]);
+
   return (
-    <div className="login-page">
-      <form className="login-card" onSubmit={handleSubmit}>
-        <h2>Iniciar Sesión</h2>
+    <div className="login-container">
+      <div className="login-card">
+        <h2>Login</h2>
 
-        {error && <p className="error-msg">{error}</p>}
-
-        <div className="form-group">
-          <label>Ingrese correo electrónico</label>
+        <form onSubmit={handleSubmit}>
           <input
             type="email"
-            placeholder="example@gmail.com"
+            placeholder="Correo"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            aria-label="Correo electrónico"
+            required
           />
-        </div>
 
-        <div className="form-group">
-          <label>Ingrese la contraseña</label>
-          <input      
+          <input
             type="password"
-            placeholder="•••••••••"
+            placeholder="Contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            aria-label="Contraseña"
+            required
           />
-        </div>
 
-        <button type="submit">Entrar</button>
-      </form>
+          <button type="submit" disabled={loading}>
+            {loading ? "Cargando..." : "Entrar"}
+          </button>
+        </form>
+
+        {errorMsg && <p className="error">{errorMsg}</p>}
+
+        <p>
+          ¿No tienes cuenta?{" "}
+          <Link to="/registro">Regístrate aquí</Link>
+        </p>
+
+        <p>
+          <Link to="/forgot-password" style={{ color: "#4b7bec" }}>
+            ¿Olvidaste tu contraseña?
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

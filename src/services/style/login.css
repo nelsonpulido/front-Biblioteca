@@ -15,10 +15,10 @@ body {
   background: linear-gradient(135deg, #141b2f, #58427b, #ff75aa);
   background-size: 300% 300%;
   animation: gradientShift 10s ease infinite;
-
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 100vh; /* Asegura que ocupe toda la altura en móviles */
 }
 
 /* Animación del fondo */
@@ -34,29 +34,28 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 20px; /* Espacio para móviles */
 }
 
 /* Tarjeta estilo glassmorphism */
 .login-card {
-  width: 380px;
+  width: 100%;
+  max-width: 380px; /* Límite máximo para evitar que sea demasiado grande */
   padding: 35px;
-
   background: rgba(101, 31, 31, 0.25);
   border-radius: 18px;
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
-
   border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 20px 35px rgba(0,0,0,0.25);
-
+  box-shadow: 0 20px 35px rgba(255, 255, 255, 0.25);
   display: flex;
   flex-direction: column;
   gap: 20px;
-
   /* Animación de caída */
   opacity: 0;
   transform: translateY(-50px);
   animation: drop 0.9s cubic-bezier(0.25, 0.8, 0.3, 1.2) forwards;
+  will-change: opacity, transform; /* Optimización para animaciones */
 }
 
 /* Animación de entrada */
@@ -74,7 +73,7 @@ body {
 /* Título */
 .login-card h2 {
   text-align: center;
-  color: white;
+  color: #ffffff; /* Mejor contraste */
   font-size: 26px;
   letter-spacing: 1px;
   font-weight: 600;
@@ -84,15 +83,14 @@ body {
 .login-card input {
   padding: 13px;
   border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.4);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   font-size: 15px;
   outline: none;
-
   background: rgba(255, 255, 255, 0.3);
-  color: #fff;
+  color: #ffffff; /* Mejor contraste */
   backdrop-filter: blur(8px);
-
-  transition: 0.3s;
+  transition: all 0.3s ease; /* Transición suave */
+  width: 100%; /* Asegura que ocupe todo el ancho */
 }
 
 .login-card input::placeholder {
@@ -101,7 +99,12 @@ body {
 
 .login-card input:focus {
   border-color: #ffffff;
-  background: rgba(255,255,255,0.45);
+  background: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Efecto de foco */
+}
+
+.login-card input:hover {
+  border-color: rgba(255, 255, 255, 0.6); /* Efecto hover sutil */
 }
 
 /* Botón moderno */
@@ -113,13 +116,79 @@ body {
   color: white;
   cursor: pointer;
   font-size: 17px;
-  transition: 0.25s;
+  transition: all 0.25s ease;
   font-weight: 600;
   letter-spacing: 0.5px;
   box-shadow: 0 10px 20px rgba(50, 120, 255, 0.3);
+  width: 100%; /* Botón de ancho completo */
 }
 
-.login-card button:hover {
+.login-card button:hover:not(:disabled) {
   transform: translateY(-3px) scale(1.03);
   box-shadow: 0 15px 25px rgba(50, 120, 255, 0.45);
+}
+
+.login-card button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none; /* Desactiva hover cuando está deshabilitado */
+}
+
+/* Mensaje de error */
+.error {
+  color: #ff6b6b;
+  text-align: center;
+  font-size: 14px;
+  margin-top: 10px;
+
+}
+
+/* Enlace de registro */
+.login-card p {
+  text-align: center;
+  color: #ffffff;
+  font-size: 14px;
+  margin-top: 15px;
+}
+
+.login-card p a {
+  color: #4b7bec;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-card p a:hover {
+  text-decoration: underline;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .login-card {
+    padding: 25px;
+    max-width: 90%; /* Más pequeño en móviles */
+  }
+
+  .login-card h2 {
+    font-size: 22px;
+  }
+
+  .login-card input {
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  .login-card button {
+    font-size: 16px;
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 20px;
+  }
+
+  .login-card h2 {
+    font-size: 20px;
+  }
 }
