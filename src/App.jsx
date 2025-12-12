@@ -35,6 +35,9 @@ function App() {
               RUTAS PÚBLICAS
           ========================================== */}
           <Route path="/login" element={<Login />} />
+
+            {/* REDIRECCIONAR / → /login */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/registro" element={<Registro />} />
 
           {/* Redirección de raíz a login */}
